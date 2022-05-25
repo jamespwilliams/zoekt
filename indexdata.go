@@ -185,14 +185,14 @@ func (d *indexData) calculateStatsForFileRange(start, end uint32) RepoStats {
 		}
 	}
 
-	var last uint32
-	if len(d.boundaries) > int(end) {
-		last += d.boundaries[end]
+	var bytesContent uint32
+	if int(end) < len(d.boundaries) {
+		bytesContent = d.boundaries[end] - d.boundaries[start]
 	}
 
-	lastFN := last
-	if len(d.fileNameIndex) > int(end) {
-		lastFN = d.fileNameIndex[end]
+	var bytesFN uint32
+	if int(end) < len(d.fileNameIndex) {
+		bytesFN = d.fileNameIndex[end] - d.fileNameIndex[start]
 	}
 
 	count, defaultCount, otherCount := d.calculateNewLinesStats(start, end)
@@ -204,7 +204,7 @@ func (d *indexData) calculateStatsForFileRange(start, end uint32) RepoStats {
 	// after aggregation. For now I will move forward with this until we can
 	// chat more.
 	return RepoStats{
-		ContentBytes: int64(int(last) + int(lastFN)),
+		ContentBytes: int64(bytesContent + bytesFN),
 		Documents:    int(end - start),
 		// CR keegan for stefan: our shard count is going to go out of whack,
 		// since we will aggregate these. So we will report more shards than are
