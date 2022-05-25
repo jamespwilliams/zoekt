@@ -444,7 +444,7 @@ func TestShardedSearcher_List(t *testing.T) {
 						Branches:   repos[0].Branches,
 					},
 				},
-				Stats: stats,
+				Stats: aggStats,
 			},
 		},
 	} {

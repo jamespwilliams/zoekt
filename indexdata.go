@@ -221,6 +221,13 @@ func (d *indexData) calculateStats() error {
 				IndexMetadata: d.metaData,
 				Stats:         d.calculateStatsForFileRange(start, end),
 			})
+		} else {
+			d.repoListEntry = append(d.repoListEntry, RepoListEntry{
+				Repository:    md,
+				IndexMetadata: d.metaData,
+				Stats:         RepoStats{Shards: 1},
+			})
+
 		}
 		start = end
 	}
