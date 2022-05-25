@@ -208,18 +208,20 @@ func (d *indexData) calculateStats() error {
 	var start, end uint32
 
 	for repoID, md := range d.repoMetaData {
-		// determine the file range for repo i
-		if d.repos[start] != uint16(repoID) {
+		if start < uint32(len(d.repos)) && d.repos[start] != uint16(repoID) {
 			return fmt.Errorf("shard documents out of order with respect to repositories: expected document %d to be part of repo %d", start, repoID)
 		}
+		// determine the file range for repo i
 		for end < uint32(len(d.repos)) && d.repos[end] == uint16(repoID) {
 			end++
 		}
-		d.repoListEntry = append(d.repoListEntry, RepoListEntry{
-			Repository:    md,
-			IndexMetadata: d.metaData,
-			Stats:         d.calculateStatsForFileRange(start, end),
-		})
+		if start < uint32(len(d.repos)) {
+			d.repoListEntry = append(d.repoListEntry, RepoListEntry{
+				Repository:    md,
+				IndexMetadata: d.metaData,
+				Stats:         d.calculateStatsForFileRange(start, end),
+			})
+		}
 		start = end
 	}
 
