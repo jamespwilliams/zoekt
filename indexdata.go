@@ -221,15 +221,17 @@ func (d *indexData) calculateStats() error {
 				IndexMetadata: d.metaData,
 				Stats:         d.calculateStatsForFileRange(start, end),
 			})
-		} else {
-			d.repoListEntry = append(d.repoListEntry, RepoListEntry{
-				Repository:    md,
-				IndexMetadata: d.metaData,
-				Stats:         RepoStats{Shards: 1},
-			})
-
 		}
 		start = end
+	}
+
+	// An empty shard for an empty repository.
+	if len(d.repos) == 0 && len(d.repoMetaData) == 1 {
+		d.repoListEntry = append(d.repoListEntry, RepoListEntry{
+			Repository:    d.repoMetaData[0],
+			IndexMetadata: d.metaData,
+			Stats:         RepoStats{Shards: 1},
+		})
 	}
 
 	// All repos in a compound shard share memoryUse. So we average out the

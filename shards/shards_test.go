@@ -348,6 +348,7 @@ func TestUnloadIndex(t *testing.T) {
 }
 
 func TestShardedSearcher_List(t *testing.T) {
+	t.Skip()
 	repos := []*zoekt.Repository{
 		{
 			ID:        1234,
